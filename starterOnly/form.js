@@ -9,16 +9,13 @@ const showError = (field, valid) => {
 };
 
 const showRadioError = (radioGroup, valid) => {
-    if (valid) {
-      radioGroup.forEach((radio) => {
-        const label = document.querySelector(`label[for="${radio.id}"]`);
-        label.classList.remove("error");
-      });
-      return;
-    }
     radioGroup.forEach((radio) => {
       const label = document.querySelector(`label[for="${radio.id}"]`);
-      label.classList.add("error");
+      if (valid) {
+        label.classList.remove("error");
+      } else {
+        label.classList.add("error");
+      }
     });
   };
 const checkFirst = (field) => {
@@ -40,33 +37,33 @@ const checkLast = (field) => {
 };
 
 const checkEmail = (field) => {
-  let valid = false;
   let emailRegExp = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+");
-  if (emailRegExp.test(field.value)) {
-    valid = true;
-  }
-  return valid;
+  return emailRegExp.test(field.value);
 };
 
 const checkBirthdate = (field) => {
-  return false;
+  const dateValue = new Date(field.value);
+
+  return !isNaN(dateValue.getTime()) && dateValue.getFullYear() >= 1914;
 };
 
 const checkQuestion = (field) => {
-  return false;
-};
-
-const checkTournament = (radioGroup) => {
-    let valid = false;
+    const answer = parseInt(field.value.trim(), 10);
   
-    radioGroup.forEach((radio) => {
-      if (radio.checked) {
-        valid = true;
-      }
-    });
-  
-    return valid;
+    return !isNaN(answer) && answer >= 0 && answer <= 100;
   };
+  
+const checkTournament = (radioGroup) => {
+  let valid = false;
+
+  radioGroup.forEach((radio) => {
+    if (radio.checked) {
+      valid = true;
+    }
+  });
+
+  return valid;
+};
 
 const checkConditions = (field) => {
   return false;
@@ -79,17 +76,16 @@ form.addEventListener("submit", (event) => {
   const isEmailValid = checkEmail(form.email);
   const isBirthDateValid = checkBirthdate(form.birthdate);
   const isQuestionValid = checkQuestion(form.quantity);
-  const isTournamentValid = checkTournament(document.querySelectorAll("[name='location']"));
-
-  
-
+  const isTournamentValid = checkTournament(
+    document.querySelectorAll("[name='location']")
+  );
 
   if (
     isFirstValid &&
     isLastValid &&
     isEmailValid &&
     isBirthDateValid &&
-    isQuestionValid && 
+    isQuestionValid &&
     isTournamentValid
   ) {
     console.log("Formulaire Valide");
@@ -100,7 +96,11 @@ form.addEventListener("submit", (event) => {
     showError(form.email, isEmailValid);
     showError(form.birthdate, isBirthDateValid);
     showError(form.quantity, isQuestionValid);
-    showRadioError(document.querySelectorAll("[name='location']"), isTournamentValid);
+    showRadioError(
+      document.querySelectorAll("[name='location']"),
+      isTournamentValid
+    );
+    
     // Afficher un message d'erreur
     console.log("Formulaire non Valide");
   }
