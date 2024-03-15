@@ -22,6 +22,7 @@ const showRadioError = (radioGroup, valid) => {
 const checkFirst = (field) => {
   let valid = true;
   if (field.value.length < 2) {
+    //regexp name
     valid = false;
   }
 
@@ -31,6 +32,7 @@ const checkFirst = (field) => {
 const checkLast = (field) => {
   let valid = true;
   if (field.value.length < 2) {
+    //regexp name
     valid = false;
   }
 
@@ -51,7 +53,7 @@ const checkBirthdate = (field) => {
 const checkQuestion = (field) => {
   const answer = field.value.trim();
 
-  return answer !== "" && Number(answer) >= 0 && Number(answer) <= 100;
+  return answer !== "" && answer >= 0 && answer <= 500;
 };
 
 const checkTournament = (radioGroup) => {
@@ -81,6 +83,16 @@ form.addEventListener("submit", (event) => {
     document.querySelectorAll("[name='location']")
   );
 
+  showError(form.first, isFirstValid);
+  showError(form.last, isLastValid);
+  showError(form.email, isEmailValid);
+  showError(form.birthdate, isBirthDateValid);
+  showError(form.quantity, isQuestionValid);
+  showRadioError(
+    document.querySelectorAll("[name='location']"),
+    isTournamentValid
+  );
+
   if (
     isFirstValid &&
     isLastValid &&
@@ -91,18 +103,5 @@ form.addEventListener("submit", (event) => {
   ) {
     console.log("Formulaire Valide");
     // Fermer la modal
-  } else {
-    showError(form.first, isFirstValid);
-    showError(form.last, isLastValid);
-    showError(form.email, isEmailValid);
-    showError(form.birthdate, isBirthDateValid);
-    showError(form.quantity, isQuestionValid);
-    showRadioError(
-      document.querySelectorAll("[name='location']"),
-      isTournamentValid
-    );
-
-    // Afficher un message d'erreur
-    console.log("Formulaire non Valide");
   }
 });
