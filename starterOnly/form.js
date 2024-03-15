@@ -9,15 +9,16 @@ const showError = (field, valid) => {
 };
 
 const showRadioError = (radioGroup, valid) => {
-    radioGroup.forEach((radio) => {
-      const label = document.querySelector(`label[for="${radio.id}"]`);
-      if (valid) {
-        label.classList.remove("error");
-      } else {
-        label.classList.add("error");
-      }
-    });
-  };
+  radioGroup.forEach((radio) => {
+    const label = document.querySelector(`label[for="${radio.id}"]`);
+    if (valid) {
+      label.classList.remove("error");
+    } else {
+      label.classList.add("error");
+    }
+  });
+};
+
 const checkFirst = (field) => {
   let valid = true;
   if (field.value.length < 2) {
@@ -48,11 +49,11 @@ const checkBirthdate = (field) => {
 };
 
 const checkQuestion = (field) => {
-    const answer = parseInt(field.value.trim(), 10);
-  
-    return !isNaN(answer) && answer >= 0 && answer <= 100;
-  };
-  
+  const answer = field.value.trim();
+
+  return answer !== "" && Number(answer) >= 0 && Number(answer) <= 100;
+};
+
 const checkTournament = (radioGroup) => {
   let valid = false;
 
@@ -100,7 +101,7 @@ form.addEventListener("submit", (event) => {
       document.querySelectorAll("[name='location']"),
       isTournamentValid
     );
-    
+
     // Afficher un message d'erreur
     console.log("Formulaire non Valide");
   }
