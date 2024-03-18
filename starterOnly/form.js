@@ -22,7 +22,7 @@ const showRadioError = (radioGroup, valid) => {
 const checkFirst = (field) => {
   let valid = true;
   if (field.value.length < 2) {
-    //regexp name
+    //regexp name /^[a-z ,.'-]+$/i
     valid = false;
   }
 
