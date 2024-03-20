@@ -20,23 +20,23 @@ const showRadioError = (radioGroup, valid) => {
 };
 
 const checkFirst = (field) => {
-  let valid = true;
-  if (field.value.length < 2) {
-    //regexp name /^[a-z ,.'-]+$/i
-    valid = false;
+  const regex = new RegExp("^[a-z ,.'-]+$", "i"); 
+
+  if (regex.test(field.value) && field.value.length >= 2) {
+    return true;
   } 
 
-  return valid;
+  return false;
 };
 
 const checkLast = (field) => {
-  let valid = true;
-  if (field.value.length < 2) {
-    //regexp name
-    valid = false;
-  }
+  const regex = new RegExp("^[a-z ,.'-]+$", "i"); 
 
-  return valid;
+  if (regex.test(field.value) && field.value.length >= 2) {
+    return true;
+  } 
+
+  return false;
 };
 
 const checkEmail = (field) => {
@@ -72,6 +72,7 @@ const checkConditions = (field) => {
   return false;
 };
 
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const isFirstValid = checkFirst(form.first);
@@ -102,6 +103,6 @@ form.addEventListener("submit", (event) => {
     isTournamentValid
   ) {
     console.log("Formulaire Valide");
-    // Fermer la modal
+    
   }
 });
