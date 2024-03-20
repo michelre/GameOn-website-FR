@@ -35,15 +35,15 @@ const checkFirst = (field) => {
 
   // Vérifier si le champ contient uniquement des lettres
   const regex = new RegExp("^[a-z ,.'-]+$", "i");
-  if (!regex.test(field.value)) {
-    return {
-      valid: false,
-      message: "Le champ doit contenir uniquement des lettres",
-    };
+  if (regex.test(field.value)) {
+    return { valid: true };
   }
 
-  // Si aucune des conditions ci-dessus n'est satisfaite, le champ est valide
-  return { valid: true };
+  // Si le champ contient d'autres caractères que des lettres, retourner invalide
+  return {
+    valid: false,
+    message: "Le champ doit contenir uniquement des lettres",
+  };
 };
 
 const checkLast = (field) => {
@@ -127,11 +127,11 @@ form.addEventListener("submit", (event) => {
   // Afficher l'erreur appropriée pour le champ de prénom
   if (firstCheck.valid) {
     // Si le champ de prénom est valide, effacer le message d'erreur
-    document.querySelector("#id_texte").innerHTML = "";
+    document.querySelector("#id_texte_prénom").innerHTML = "";
     showError(firstField, true);
   } else {
     // Si le champ de prénom n'est pas valide, afficher le message d'erreur
-    document.querySelector("#id_texte").innerHTML = firstCheck.message;
+    document.querySelector("#id_texte_prénom").innerHTML = firstCheck.message;
     showError(firstField, false);
     return false;
   }
