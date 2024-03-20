@@ -47,13 +47,30 @@ const checkFirst = (field) => {
 };
 
 const checkLast = (field) => {
-  const regex = new RegExp("^[a-z ,.'-]+$", "i");
-
-  if (regex.test(field.value) && field.value.length >= 2) {
-    return true;
+  // Vérifier si le champ est vide
+  if (field.value.trim() === "") {
+    return { valid: false, message: "Le champ ne doit pas être vide" };
   }
 
-  return false;
+  // Vérifier si le champ contient au moins 2 caractères
+  if (field.value.length < 2) {
+    return {
+      valid: false,
+      message: "Le champ doit contenir minimum 2 caractères",
+    };
+  }
+
+  // Vérifier si le champ contient uniquement des lettres
+  const regex = new RegExp("^[a-z ,.'-]+$", "i");
+  if (regex.test(field.value)) {
+    return { valid: true };
+  }
+
+  // Si le champ contient d'autres caractères que des lettres, retourner invalide
+  return {
+    valid: false,
+    message: "Le champ doit contenir uniquement des lettres",
+  };
 };
 
 const checkEmail = (field) => {
@@ -99,6 +116,8 @@ form.addEventListener("submit", (event) => {
 
   //Nom
   const isLastValid = checkLast(form.last);
+  const lastField = form.last;
+  const lastCheck = checkLast(lastField);
 
   //Email
   const isEmailValid = checkEmail(form.email);
@@ -135,7 +154,18 @@ form.addEventListener("submit", (event) => {
     showError(firstField, false);
     return false;
   }
-  if (!isLastValid) return false;
+  // Afficher l'erreur appropriée pour le champ du nom
+  if (lastCheck.valid) {
+    // Si le champ du nom est valide, effacer le message d'erreur
+    document.querySelector("#id_texte_nom").innerHTML = "";
+    showError(lastField, true);
+  } else {
+    // Si le champ du nom n'est pas valide, afficher le message d'erreur
+    document.querySelector("#id_texte_nom").innerHTML = lastCheck.message;
+    showError(lastField, false);
+    return false;
+  }
+
   if (!isEmailValid) return false;
   if (!isBirthDateValid) return false;
   if (!isQuestionValid) return false;
