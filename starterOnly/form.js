@@ -24,7 +24,7 @@ const checkFirst = (field) => {
   if (field.value.length < 2) {
     //regexp name /^[a-z ,.'-]+$/i
     valid = false;
-  }
+  } 
 
   return valid;
 };
