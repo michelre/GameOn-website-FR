@@ -25,7 +25,6 @@ const checkFirst = (field) => {
   if (regex.test(field.value) && field.value.length >= 2) {
     return true;
   } 
-
   return false;
 };
 
@@ -73,6 +72,8 @@ const checkConditions = (field) => {
 };
 
 
+
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const isFirstValid = checkFirst(form.first);
@@ -94,15 +95,15 @@ form.addEventListener("submit", (event) => {
     isTournamentValid
   );
 
-  if (
-    isFirstValid &&
-    isLastValid &&
-    isEmailValid &&
-    isBirthDateValid &&
-    isQuestionValid &&
-    isTournamentValid
-  ) {
-    console.log("Formulaire Valide");
-    
+  if (!isFirstValid){
+    document.querySelector("#id_texte").innerHTML = "Le prénom est pas valide"; 
+    return false;
   }
-});
+  if (!isLastValid) return false; 
+  if (!isEmailValid) return false; 
+  if (!isBirthDateValid) return false;
+  if (!isQuestionValid) return false;
+  if (!isTournamentValid) return false;
+  console.log("Formulaire Valide");
+
+})
