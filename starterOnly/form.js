@@ -143,28 +143,23 @@ form.addEventListener("submit", (event) => {
     isTournamentValid
   );
 
-  // Afficher l'erreur appropriée pour le champ de prénom
-  if (firstCheck.valid) {
-    // Si le champ de prénom est valide, effacer le message d'erreur
-    document.querySelector("#id_texte_prénom").innerHTML = "";
-    showError(firstField, true);
-  } else {
-    // Si le champ de prénom n'est pas valide, afficher le message d'erreur
-    document.querySelector("#id_texte_prénom").innerHTML = firstCheck.message;
-    showError(firstField, false);
-    return false;
-  }
-  // Afficher l'erreur appropriée pour le champ du nom
-  if (lastCheck.valid) {
-    // Si le champ du nom est valide, effacer le message d'erreur
-    document.querySelector("#id_texte_nom").innerHTML = "";
-    showError(lastField, true);
-  } else {
-    // Si le champ du nom n'est pas valide, afficher le message d'erreur
-    document.querySelector("#id_texte_nom").innerHTML = lastCheck.message;
-    showError(lastField, false);
-    return false;
-  }
+  // Afficher l'erreur appropriée pour le champ de prénom et le champ de nom
+if (firstCheck.valid) {
+  // Si le champ de prénom est valide, effacer le message d'erreur
+  document.querySelector("#id_texte_prénom").innerHTML = "";
+  showError(firstField, true);
+} else if (lastCheck.valid) {
+  // Si le champ du nom est valide, effacer le message d'erreur
+  document.querySelector("#id_texte_nom").innerHTML = "";
+  showError(lastField, true);
+} else {
+  // Si aucun des champs n'est valide, afficher les messages d'erreur appropriés
+  document.querySelector("#id_texte_prénom").innerHTML = firstCheck.message;
+  showError(firstField, false);
+  document.querySelector("#id_texte_nom").innerHTML = lastCheck.message;
+  showError(lastField, false);
+  return false;
+}
 
   if (!isEmailValid) return false;
   if (!isBirthDateValid) return false;
