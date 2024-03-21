@@ -122,7 +122,9 @@ const checkTournament = (radioGroup) => {
 
 const checkConditions = () => {
   const conditionCheckbox = document.getElementById("checkbox1");
-  const conditionLabel = document.querySelector(`label[for="${conditionCheckbox.id}"]`);
+  const conditionLabel = document.querySelector(
+    `label[for="${conditionCheckbox.id}"]`
+  );
   if (conditionCheckbox.checked) {
     conditionLabel.classList.remove("error");
     return { valid: true };
@@ -132,6 +134,33 @@ const checkConditions = () => {
     valid: false,
     message: "Vous devez accepter les conditions d'utilisation",
   };
+};
+// Fonction pour fermer la modale en cliquant en dehors d'elle
+const closeModalOnClickOutside = (modal) => {
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.remove();
+    }
+  });
+};
+
+// Fonction pour afficher une modale de confirmation
+const showConfirmationModal = () => {
+  // Fermer la modale du formulaire
+  document.querySelector(".bground").style.display = "none";
+
+  // Créer une nouvelle modale de confirmation
+  const confirmationModal = document.createElement("div");
+  confirmationModal.classList.add("confirmation-modal");
+  confirmationModal.innerHTML = `
+    <div class="modal-content">
+      <p>Super ! Merci pour ton inscription !</p>
+    </div>
+  `;
+  document.body.appendChild(confirmationModal);
+
+  // Appeler la fonction pour fermer la modale en cliquant en dehors d'elle
+  closeModalOnClickOutside(confirmationModal);
 };
 
 form.addEventListener("submit", (event) => {
@@ -179,18 +208,16 @@ form.addEventListener("submit", (event) => {
   document.querySelector("#id_texte_conditions").innerHTML =
     isConditionsAccepted.valid ? "" : isConditionsAccepted.message;
 
-  // Si l'un des champs n'est pas valide, retourner false
-if (
-  isFirstValid.valid === false ||
-  isLastValid.valid === false ||
-  isEmailValid.valid === false ||
-  isBirthDateValid.valid === false ||
-  isQuestionValid.valid === false ||
-  isTournamentValid.valid === false ||
-  isConditionsAccepted.valid === false
-) {
-  return false;
-}
-
-  console.log("Formulaire Valide");
+  // Si tous les champs sont valides, afficher la modale de confirmation
+  if (
+    isFirstValid.valid &&
+    isLastValid.valid &&
+    isEmailValid.valid &&
+    isBirthDateValid.valid &&
+    isQuestionValid.valid &&
+    isTournamentValid.valid &&
+    isConditionsAccepted.valid
+  ) {
+    showConfirmationModal();
+  }
 });
