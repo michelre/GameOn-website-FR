@@ -10,22 +10,19 @@ const showError = (field, valid) => {
 
 const showRadioError = (radioGroup, valid) => {
   radioGroup.forEach((radio) => {
-    const label = document.querySelector(`label[for="${radio.id}"]`);
     if (valid) {
-      label.classList.remove("error");
+      radio.classList.remove("error");
     } else {
-      label.classList.add("error");
+      radio.classList.add("error");
     }
   });
 };
 
 const checkFirst = (field) => {
-  // Vérifier si le champ est vide
   if (field.value.trim() === "") {
     return { valid: false, message: "Le champ ne doit pas être vide" };
   }
 
-  // Vérifier si le champ contient au moins 2 caractères
   if (field.value.length < 2) {
     return {
       valid: false,
@@ -33,13 +30,11 @@ const checkFirst = (field) => {
     };
   }
 
-  // Vérifier si le champ contient uniquement des lettres
   const regex = new RegExp("^[a-z ,.'-]+$", "i");
   if (regex.test(field.value)) {
     return { valid: true };
   }
 
-  // Si le champ contient d'autres caractères que des lettres, retourner invalide
   return {
     valid: false,
     message: "Le champ doit contenir uniquement des lettres",
@@ -47,12 +42,10 @@ const checkFirst = (field) => {
 };
 
 const checkLast = (field) => {
-  // Vérifier si le champ est vide
   if (field.value.trim() === "") {
     return { valid: false, message: "Le champ ne doit pas être vide" };
   }
 
-  // Vérifier si le champ contient au moins 2 caractères
   if (field.value.length < 2) {
     return {
       valid: false,
@@ -60,13 +53,11 @@ const checkLast = (field) => {
     };
   }
 
-  // Vérifier si le champ contient uniquement des lettres
   const regex = new RegExp("^[a-z ,.'-]+$", "i");
   if (regex.test(field.value)) {
     return { valid: true };
   }
 
-  // Si le champ contient d'autres caractères que des lettres, retourner invalide
   return {
     valid: false,
     message: "Le champ doit contenir uniquement des lettres",
@@ -74,96 +65,132 @@ const checkLast = (field) => {
 };
 
 const checkEmail = (field) => {
+  if (field.value.trim() === "") {
+    return { valid: false, message: "Le champ ne doit pas être vide" };
+  }
+
   let emailRegExp = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\\.[a-z0-9._-]+");
-  return emailRegExp.test(field.value);
+  if (!emailRegExp.test(field.value)) {
+    return { valid: false, message: "Veuillez saisir un email correct" };
+  }
+
+  return { valid: true };
 };
 
 const checkBirthdate = (field) => {
   const dateValue = new Date(field.value);
 
-  return !isNaN(dateValue.getTime()) && dateValue.getFullYear() >= 1914;
+  if (field.value.trim() === "") {
+    return { valid: false, message: "Veuillez indiquer votre Date" };
+  }
+
+  if (isNaN(dateValue.getTime()) || dateValue.getFullYear() < 1914) {
+    return {
+      valid: false,
+      message: "Veuillez saisir une date correcte ( minimum 1914)",
+    };
+  }
+
+  return { valid: true };
 };
 
 const checkQuestion = (field) => {
   const answer = field.value.trim();
 
-  return answer !== "" && answer >= 0 && answer <= 500;
+  if (answer === "") {
+    return { valid: false, message: "Le champ ne doit pas être vide" };
+  }
+
+  if (answer < 0 || answer > 500) {
+    return { valid: false, message: "Maximum de 500" };
+  }
+
+  return { valid: true };
 };
 
 const checkTournament = (radioGroup) => {
   let valid = false;
-
   radioGroup.forEach((radio) => {
     if (radio.checked) {
       valid = true;
     }
   });
-
-  return valid;
+  return valid
+    ? { valid: true }
+    : { valid: false, message: "Veuillez sélectionner une des villes" };
 };
 
-const checkConditions = (field) => {
-  return false;
+const checkConditions = () => {
+  const conditionCheckbox = document.getElementById("checkbox1");
+  const conditionLabel = document.querySelector(`label[for="${conditionCheckbox.id}"]`);
+  if (conditionCheckbox.checked) {
+    conditionLabel.classList.remove("error");
+    return { valid: true };
+  }
+  conditionLabel.classList.add("error");
+  return {
+    valid: false,
+    message: "Vous devez accepter les conditions d'utilisation",
+  };
 };
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  //Prénom
+  // Validation des champs
   const isFirstValid = checkFirst(form.first);
-  const firstField = form.first;
-  const firstCheck = checkFirst(firstField);
-
-  //Nom
   const isLastValid = checkLast(form.last);
-  const lastField = form.last;
-  const lastCheck = checkLast(lastField);
-
-  //Email
   const isEmailValid = checkEmail(form.email);
-
-  //Date
   const isBirthDateValid = checkBirthdate(form.birthdate);
-
-  //Questions
   const isQuestionValid = checkQuestion(form.quantity);
-
-  //Radio
   const isTournamentValid = checkTournament(
     document.querySelectorAll("[name='location']")
   );
+  const isConditionsAccepted = checkConditions();
 
-  showError(form.first, isFirstValid);
-  showError(form.last, isLastValid);
-  showError(form.email, isEmailValid);
-  showError(form.birthdate, isBirthDateValid);
-  showError(form.quantity, isQuestionValid);
+  // Affichage des messages d'erreur pour chaque champ
+  showError(form.first, isFirstValid.valid);
+  showError(form.last, isLastValid.valid);
+  showError(form.email, isEmailValid.valid);
+  showError(form.birthdate, isBirthDateValid.valid);
+  showError(form.quantity, isQuestionValid.valid);
   showRadioError(
     document.querySelectorAll("[name='location']"),
     isTournamentValid
   );
 
-  // Afficher l'erreur appropriée pour le champ de prénom et le champ de nom
-if (firstCheck.valid) {
-  // Si le champ de prénom est valide, effacer le message d'erreur
-  document.querySelector("#id_texte_prénom").innerHTML = "";
-  showError(firstField, true);
-} else if (lastCheck.valid) {
-  // Si le champ du nom est valide, effacer le message d'erreur
-  document.querySelector("#id_texte_nom").innerHTML = "";
-  showError(lastField, true);
-} else {
-  // Si aucun des champs n'est valide, afficher les messages d'erreur appropriés
-  document.querySelector("#id_texte_prénom").innerHTML = firstCheck.message;
-  showError(firstField, false);
-  document.querySelector("#id_texte_nom").innerHTML = lastCheck.message;
-  showError(lastField, false);
+  // Affichage des messages d'erreur spécifiques pour les champs de prénom, de nom, d'email, de date de naissance, de question et de boutons radio
+  document.querySelector("#id_texte_prénom").innerHTML = isFirstValid.valid
+    ? ""
+    : isFirstValid.message;
+  document.querySelector("#id_texte_nom").innerHTML = isLastValid.valid
+    ? ""
+    : isLastValid.message;
+  document.querySelector("#id_texte_email").innerHTML = isEmailValid.valid
+    ? ""
+    : isEmailValid.message;
+  document.querySelector("#id_texte_birthdate").innerHTML =
+    isBirthDateValid.valid ? "" : isBirthDateValid.message;
+  document.querySelector("#id_texte_question").innerHTML = isQuestionValid.valid
+    ? ""
+    : isQuestionValid.message;
+  document.querySelector("#id_texte_tournament").innerHTML =
+    isTournamentValid.valid ? "" : isTournamentValid.message;
+  document.querySelector("#id_texte_conditions").innerHTML =
+    isConditionsAccepted.valid ? "" : isConditionsAccepted.message;
+
+  // Si l'un des champs n'est pas valide, retourner false
+if (
+  isFirstValid.valid === false ||
+  isLastValid.valid === false ||
+  isEmailValid.valid === false ||
+  isBirthDateValid.valid === false ||
+  isQuestionValid.valid === false ||
+  isTournamentValid.valid === false ||
+  isConditionsAccepted.valid === false
+) {
   return false;
 }
 
-  if (!isEmailValid) return false;
-  if (!isBirthDateValid) return false;
-  if (!isQuestionValid) return false;
-  if (!isTournamentValid) return false;
   console.log("Formulaire Valide");
 });
