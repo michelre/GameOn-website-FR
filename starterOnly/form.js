@@ -1,24 +1,15 @@
 const form = document.querySelector("#form");
 
-const showError = (field, valid) => {
+const showError = (valid, message, errorFieldId) => {
+  const errorField = document.querySelector(errorFieldId)
   if (valid) {
-    field.classList.remove("error");
+    errorField.innerHTML = ''
     return;
   }
-  field.classList.add("error");
+  errorField.innerHTML = message
 };
 
-const showRadioError = (radioGroup, valid) => {
-  radioGroup.forEach((radio) => {
-    if (valid) {
-      radio.classList.remove("error");
-    } else {
-      radio.classList.add("error");
-    }
-  });
-};
-
-const checkFirst = (field) => {
+const checkName = (field) => {
   if (field.value.trim() === "") {
     return { valid: false, message: "Le champ ne doit pas être vide" };
   }
@@ -30,30 +21,7 @@ const checkFirst = (field) => {
     };
   }
 
-  const regex = new RegExp("^[a-z ,.'-]+$", "i");
-  if (regex.test(field.value)) {
-    return { valid: true };
-  }
-
-  return {
-    valid: false,
-    message: "Le champ doit contenir uniquement des lettres",
-  };
-};
-
-const checkLast = (field) => {
-  if (field.value.trim() === "") {
-    return { valid: false, message: "Le champ ne doit pas être vide" };
-  }
-
-  if (field.value.length < 2) {
-    return {
-      valid: false,
-      message: "Le champ doit contenir minimum 2 caractères",
-    };
-  }
-
-  const regex = new RegExp("^[a-z ,.'-]+$", "i");
+  const regex = new RegExp("^[a-z ,.'-,é,è]+$", "i");
   if (regex.test(field.value)) {
     return { valid: true };
   }
@@ -135,40 +103,13 @@ const checkConditions = () => {
     message: "Vous devez accepter les conditions d'utilisation",
   };
 };
-// Fonction pour fermer la modale en cliquant en dehors d'elle
-const closeModalOnClickOutside = (modal) => {
-  window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.remove();
-    }
-  });
-};
-
-// Fonction pour afficher une modale de confirmation
-const showConfirmationModal = () => {
-  // Fermer la modale du formulaire
-  document.querySelector(".bground").style.display = "none";
-
-  // Créer une nouvelle modale de confirmation
-  const confirmationModal = document.createElement("div");
-  confirmationModal.classList.add("confirmation-modal");
-  confirmationModal.innerHTML = `
-    <div class="modal-content">
-      <p>Super ! Merci pour ton inscription !</p>
-    </div>
-  `;
-  document.body.appendChild(confirmationModal);
-
-  // Appeler la fonction pour fermer la modale en cliquant en dehors d'elle
-  closeModalOnClickOutside(confirmationModal);
-};
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
   // Validation des champs
-  const isFirstValid = checkFirst(form.first);
-  const isLastValid = checkLast(form.last);
+  const isFirstValid = checkName(form.first);
+  const isLastValid = checkName(form.last);
   const isEmailValid = checkEmail(form.email);
   const isBirthDateValid = checkBirthdate(form.birthdate);
   const isQuestionValid = checkQuestion(form.quantity);
@@ -178,35 +119,13 @@ form.addEventListener("submit", (event) => {
   const isConditionsAccepted = checkConditions();
 
   // Affichage des messages d'erreur pour chaque champ
-  showError(form.first, isFirstValid.valid);
-  showError(form.last, isLastValid.valid);
-  showError(form.email, isEmailValid.valid);
-  showError(form.birthdate, isBirthDateValid.valid);
-  showError(form.quantity, isQuestionValid.valid);
-  showRadioError(
-    document.querySelectorAll("[name='location']"),
-    isTournamentValid
-  );
-
-  // Affichage des messages d'erreur spécifiques pour les champs de prénom, de nom, d'email, de date de naissance, de question et de boutons radio
-  document.querySelector("#id_texte_prénom").innerHTML = isFirstValid.valid
-    ? ""
-    : isFirstValid.message;
-  document.querySelector("#id_texte_nom").innerHTML = isLastValid.valid
-    ? ""
-    : isLastValid.message;
-  document.querySelector("#id_texte_email").innerHTML = isEmailValid.valid
-    ? ""
-    : isEmailValid.message;
-  document.querySelector("#id_texte_birthdate").innerHTML =
-    isBirthDateValid.valid ? "" : isBirthDateValid.message;
-  document.querySelector("#id_texte_question").innerHTML = isQuestionValid.valid
-    ? ""
-    : isQuestionValid.message;
-  document.querySelector("#id_texte_tournament").innerHTML =
-    isTournamentValid.valid ? "" : isTournamentValid.message;
-  document.querySelector("#id_texte_conditions").innerHTML =
-    isConditionsAccepted.valid ? "" : isConditionsAccepted.message;
+  showError(isFirstValid.valid, isFirstValid.message, '#id_texte_prénom');
+  showError(isLastValid.valid, isLastValid.message, '#id_texte_nom');
+  showError(isEmailValid.valid, isEmailValid.message, '#id_texte_email');
+  showError(isBirthDateValid.valid, isBirthDateValid.message, '#id_texte_birthdate');
+  showError(isQuestionValid.valid, isQuestionValid.message, '#id_texte_question');
+  showError(isTournamentValid.valid, isTournamentValid.message, "#id_texte_tournament");
+  showError(isConditionsAccepted.valid, isConditionsAccepted.message, "#id_texte_conditions");
 
   // Si tous les champs sont valides, afficher la modale de confirmation
   if (

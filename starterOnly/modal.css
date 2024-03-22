@@ -68,6 +68,11 @@ img {
   display: none;
 }
 
+.logo {
+  width: auto;
+  height: auto;
+}
+
 @media screen and (max-width: 768px) {
   .topnav a {display: none;}
   .topnav a.icon {
